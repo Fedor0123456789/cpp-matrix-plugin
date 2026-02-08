@@ -16,19 +16,19 @@
     "commands": [
       {
         "command": "third-labwork.insertMatrixAddition",
-        "title": "C++ Matrix: Вставить функцию сложения матриц"
+        "title": "Matrix Addition"
       },
       {
         "command": "third-labwork.insertMatrixSubtraction",
-        "title": "C++ Matrix: Вставить функцию вычитания матриц"
+        "title": "Matrix Subtraction"
       },
       {
         "command": "third-labwork.insertMatrixMultiplication",
-        "title": "C++ Matrix: Вставить функцию умножения матриц"
+        "title": "Matrix Multiplication"
       },
       {
         "command": "third-labwork.insertMatrixDeterminant",
-        "title": "C++ Matrix: Вставить функцию нахождения детерминанта"
+        "title": "Matrix Determinant"
       }
     ]
   },

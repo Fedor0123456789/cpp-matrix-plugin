@@ -1,107 +1,100 @@
-// Импортируем API VS Code (аналог #include <vscode.h>)
 import * as vscode from 'vscode';
 
-/**
- * Функция активации плагина
- * Вызывается при первом запуске расширения
- * Аналог main() в C++, но для плагина
- */
 export function activate(context: vscode.ExtensionContext) {
-    // Выводим сообщение в консоль (аналог cout)
-    console.log('C++ Matrix Code Generator активирован!');
 
-    // Регистрируем команду для сложения матриц
-    // registerCommand — это как привязать функцию к кнопке
     const addCommand = vscode.commands.registerCommand(
-        'third-labwork.insertMatrixAddition',  // ID команды (должен совпадать с package.json)
-        () => {  // Стрелочная функция (аналог lambda в C++11)
-            insertCode(getMatrixAdditionCode());  // Вызываем функцию вставки
-        }
+        'third-labwork.insertMatrixAddition',
+        handleMatrixAddition
     );
-
-    // Регистрируем команду для вычитания матриц
+    
     const subtractCommand = vscode.commands.registerCommand(
         'third-labwork.insertMatrixSubtraction',
-        () => {
-            insertCode(getMatrixSubtractionCode());
-        }
+        handleMatrixSubtraction
     );
-
-    // Регистрируем команду для умножения матриц
+    
     const multiplyCommand = vscode.commands.registerCommand(
         'third-labwork.insertMatrixMultiplication',
-        () => {
-            insertCode(getMatrixMultiplicationCode());
-        }
+        handleMatrixMultiplication
     );
 
-    // Регистрируем команду для обратной матрицы
+    
     const inverseCommand = vscode.commands.registerCommand(
         'third-labwork.insertMatrixInverse',
-        () => {
-            insertCode(getMatrixInverseCode());
-        }
+        handleMatrixInverse
     );
-
-    // Добавляем команды в массив подписок
-    // Это нужно для автоматической очистки при деактивации плагина
-    context.subscriptions.push(addCommand, subtractCommand, multiplyCommand, inverseCommand);
+    
+    context.subscriptions.push(
+        addCommand,
+        subtractCommand,
+        multiplyCommand,
+        inverseCommand
+    );
 }
 
-/**
- * Функция вставки кода в редактор
- * @param code - строка с C++ кодом для вставки
- */
-function insertCode(code: string): void {  // void — ничего не возвращает
-    // Получаем активный редактор (текущий открытый файл)
-    const editor = vscode.window.activeTextEditor;
-    
-    // Проверяем, открыт ли файл (аналог if (editor == nullptr))
-    if (!editor) {
-        vscode.window.showErrorMessage('Откройте файл для вставки кода!');
-        return;  // выходим из функции
-    }
+function handleMatrixAddition() {
+    insertMatrixFunction('addition');
+}
 
-    // Вставляем код в позицию курсора
-    editor.edit(editBuilder => {  // editBuilder — объект для редактирования
-        // editor.selection.active — текущая позиция курсора
+function handleMatrixSubtraction() {
+    insertMatrixFunction('subtraction');
+}
+
+function handleMatrixMultiplication() {
+    insertMatrixFunction('multiplication');
+}
+
+function handleMatrixInverse() {
+    insertMatrixFunction('inverse');
+}
+
+function insertMatrixFunction(operation: string): void {
+
+    const editor = vscode.window.activeTextEditor;
+
+    let code: string;
+    
+    switch (operation) {
+        case 'addition':
+            code = getMatrixAdditionCode();
+            break;
+        
+        case 'subtraction':
+            code = getMatrixSubtractionCode();
+            break;
+        
+        case 'multiplication':
+            code = getMatrixMultiplicationCode();
+            break;
+        
+        case 'inverse':
+            code = getMatrixInverseCode();
+            break;
+    }
+    editor.edit(function(editBuilder) {
+
         editBuilder.insert(editor.selection.active, code);
     });
-
-    // Показываем уведомление об успехе
-    vscode.window.showInformationMessage('C++ код вставлен!');
 }
 
-/**
- * Генерирует C++ код для сложения матриц
- * @returns строка с готовым кодом функции
- */
 function getMatrixAdditionCode(): string {
-    // Используем обратные кавычки `` для многострочного текста
-    // Это как R"(...)" в C++11
     return `
 /**
  * Сложение двух матриц
  * @param matrixA - первая матрица размером m×n
  * @param matrixB - вторая матрица размером m×n
- * @param m - количество строк
- * @param n - количество столбцов
  * @return новая матрица-результат сложения
  */
 vector<vector<double>> addMatrices(const vector<vector<double>>& matrixA, 
                                    const vector<vector<double>>& matrixB) {
-    int m = matrixA.size();        // количество строк
-    int n = matrixA[0].size();     // количество столбцов
+    int m = matrixA.size();
+    int n = matrixA[0].size();
     
-    // Проверка размерностей
     if (m != matrixB.size() || n != matrixB[0].size()) {
         throw invalid_argument("Матрицы должны иметь одинаковые размеры!");
     }
     
-    // Создаём результирующую матрицу
     vector<vector<double>> result(m, vector<double>(n));
     
-    // Складываем элементы
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
             result[i][j] = matrixA[i][j] + matrixB[i][j];
@@ -118,34 +111,25 @@ vector<vector<double>> addMatrices(const vector<vector<double>>& matrixA,
 `;
 }
 
-/**
- * Генерирует C++ код для вычитания матриц
- * @returns строка с готовым кодом функции
- */
 function getMatrixSubtractionCode(): string {
     return `
 /**
  * Вычитание двух матриц
  * @param matrixA - первая матрица размером m×n
  * @param matrixB - вторая матрица размером m×n
- * @param m - количество строк
- * @param n - количество столбцов
  * @return новая матрица-результат вычитания (A - B)
  */
 vector<vector<double>> subtractMatrices(const vector<vector<double>>& matrixA, 
                                         const vector<vector<double>>& matrixB) {
-    int m = matrixA.size();        // количество строк
-    int n = matrixA[0].size();     // количество столбцов
+    int m = matrixA.size();
+    int n = matrixA[0].size();
     
-    // Проверка размерностей
     if (m != matrixB.size() || n != matrixB[0].size()) {
         throw invalid_argument("Матрицы должны иметь одинаковые размеры!");
     }
     
-    // Создаём результирующую матрицу
     vector<vector<double>> result(m, vector<double>(n));
     
-    // Вычитаем элементы
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
             result[i][j] = matrixA[i][j] - matrixB[i][j];
@@ -162,10 +146,6 @@ vector<vector<double>> subtractMatrices(const vector<vector<double>>& matrixA,
 `;
 }
 
-/**
- * Генерирует C++ код для умножения матриц
- * @returns строка с готовым кодом функции
- */
 function getMatrixMultiplicationCode(): string {
     return `
 /**
@@ -176,17 +156,16 @@ function getMatrixMultiplicationCode(): string {
  */
 vector<vector<double>> multiplyMatrices(const vector<vector<double>>& matrixA, 
                                         const vector<vector<double>>& matrixB) {
-    int m = matrixA.size();         // строки первой матрицы
-    int k = matrixA[0].size();      // столбцы первой = строки второй
-    int n = matrixB[0].size();      // столбцы второй матрицы
+    int m = matrixA.size();
+    int k = matrixA[0].size();
+    int n = matrixB[0].size();
     
-    // Проверка возможности умножения
     if (k != matrixB.size()) {
         throw invalid_argument("Число столбцов A должно равняться числу строк B!");
     }
+    
     vector<vector<double>> result(m, vector<double>(n, 0.0));
     
-    // Умножаем матрицы
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < n; j++) {
             for (int p = 0; p < k; p++) {
@@ -197,19 +176,28 @@ vector<vector<double>> multiplyMatrices(const vector<vector<double>>& matrixA,
     
     return result;
 }
+
+// Пример использования:
+// vector<vector<double>> A = {{1, 2, 3}, {4, 5, 6}};
+// vector<vector<double>> B = {{7, 8}, {9, 10}, {11, 12}};
+// vector<vector<double>> product = multiplyMatrices(A, B);
 `;
 }
 
 function getMatrixInverseCode(): string {
     return `
-
+/**
+ * Вычисление определителя матрицы (рекурсивно)
+ * @param matrix - квадратная матрица
+ * @return значение определителя
+ */
 double getDeterminant(const vector<vector<double>>& matrix) {
     int n = matrix.size();
     
     if (n == 1) {
         return matrix[0][0];
     }
-
+    
     if (n == 2) {
         return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0];
     }
@@ -217,7 +205,6 @@ double getDeterminant(const vector<vector<double>>& matrix) {
     double det = 0.0;
     
     for (int j = 0; j < n; j++) {
-        // Создаём минор (подматрицу без строки 0 и столбца j)
         vector<vector<double>> minor(n - 1, vector<double>(n - 1));
         
         for (int row = 1; row < n; row++) {
@@ -229,7 +216,7 @@ double getDeterminant(const vector<vector<double>>& matrix) {
                 }
             }
         }
-
+        
         double sign = (j % 2 == 0) ? 1.0 : -1.0;
         det += sign * matrix[0][j] * getDeterminant(minor);
     }
@@ -237,13 +224,17 @@ double getDeterminant(const vector<vector<double>>& matrix) {
     return det;
 }
 
+/**
+ * Вычисление матрицы алгебраических дополнений (кофакторов)
+ * @param matrix - исходная квадратная матрица
+ * @return матрица алгебраических дополнений
+ */
 vector<vector<double>> getCofactorMatrix(const vector<vector<double>>& matrix) {
     int n = matrix.size();
     vector<vector<double>> cofactors(n, vector<double>(n));
     
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
-            // Создаём минор (без строки i и столбца j)
             vector<vector<double>> minor(n - 1, vector<double>(n - 1));
             
             int minorRow = 0;
@@ -268,6 +259,11 @@ vector<vector<double>> getCofactorMatrix(const vector<vector<double>>& matrix) {
     return cofactors;
 }
 
+/**
+ * Транспонирование матрицы
+ * @param matrix - исходная матрица m×n
+ * @return транспонированная матрица n×m
+ */
 vector<vector<double>> transposeMatrix(const vector<vector<double>>& matrix) {
     int m = matrix.size();
     int n = matrix[0].size();
@@ -283,6 +279,11 @@ vector<vector<double>> transposeMatrix(const vector<vector<double>>& matrix) {
     return transposed;
 }
 
+/**
+ * Нахождение обратной матрицы через алгебраические дополнения
+ * @param matrix - исходная квадратная невырожденная матрица
+ * @return обратная матрица
+ */
 vector<vector<double>> getInverseMatrix(const vector<vector<double>>& matrix) {
     int n = matrix.size();
     
@@ -297,7 +298,6 @@ vector<vector<double>> getInverseMatrix(const vector<vector<double>>& matrix) {
     }
     
     vector<vector<double>> cofactors = getCofactorMatrix(matrix);
-    
     vector<vector<double>> adjugate = transposeMatrix(cofactors);
     
     vector<vector<double>> inverse(n, vector<double>(n));
@@ -309,10 +309,11 @@ vector<vector<double>> getInverseMatrix(const vector<vector<double>>& matrix) {
     
     return inverse;
 }
+
+// Пример использования:
+// vector<vector<double>> A = {{4, 7}, {2, 6}};
+// vector<vector<double>> A_inv = getInverseMatrix(A);
 `;
 }
 
-export function deactivate() {
-    console.log('C++ Matrix Code Generator деактивирован');
-}
-
+export function deactivate() {}

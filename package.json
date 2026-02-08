@@ -4,18 +4,31 @@
   "description": "matrix arithmetic",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.109.0"
+    "vscode": "^1.103.2"
   },
   "categories": [
-    "Other"
+    "Snippets",
+    "Programming Languages"
   ],
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "third-labwork.helloWorld",
-        "title": "Hello World"
+        "command": "third-labwork.insertMatrixAddition",
+        "title": "C++ Matrix: Вставить функцию сложения матриц"
+      },
+      {
+        "command": "third-labwork.insertMatrixSubtraction",
+        "title": "C++ Matrix: Вставить функцию вычитания матриц"
+      },
+      {
+        "command": "third-labwork.insertMatrixMultiplication",
+        "title": "C++ Matrix: Вставить функцию умножения матриц"
+      },
+      {
+        "command": "third-labwork.insertMatrixInverse",
+        "title": "C++ Matrix: Вставить функцию обратной матрицы"
       }
     ]
   },
